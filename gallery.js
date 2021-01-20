@@ -2,9 +2,10 @@ import galleryItems from './gallery-items.js';
 
 const refs = {
   gallery: document.querySelector('.js-gallery'),
-  closeBtn: document.querySelector('button[data-action="close-lightbox"]'),
+  closeButton: document.querySelector('button[data-action="close-lightbox"]'),
   lightBox: document.querySelector('.js-lightbox'),
   bigImg: document.querySelector('.lightbox__image'),
+  overlay: document.querySelector('.lightbox__overlay'),
 };
 
 const createMarkup = ({ preview, original, description }) =>
@@ -27,34 +28,34 @@ const createGalery = galleryItems =>
 
 refs.gallery.insertAdjacentHTML('beforeend', createGalery(galleryItems));
 
-const showImg = event => {
+refs.gallery.addEventListener('click', modalOpen);
+refs.closeButton.addEventListener('click', modalClose);
+refs.overlay.addEventListener('click', closeOverlay);
+
+function modalOpen(event) {
   event.preventDefault();
+  const targetImage = event.target;
+  if (targetImage === event.currentTarget) {
+    return;
+  }
+
   refs.lightBox.classList.add('is-open');
-  refs.bigImg.src = event.target.dataset.source;
-};
+  refs.bigImg.alt = targetImage.alt;
+  refs.bigImg.src = targetImage.dataset.source;
+  window.addEventListener('keydown', handleEscape);
+}
 
-const closeImg = () => {
+function modalClose() {
   refs.lightBox.classList.remove('is-open');
+  refs.bigImg.alt = '';
   refs.bigImg.src = '';
-};
+  window.removeEventListener('keydown', handleEscape);
+}
 
-const controlGallery = event => {
-  if (
-    event.target.classList.contains('gallery__image') &&
-    !refs.lightBox.classList.contains('is-open')
-  ) {
-    showImg(event);
-  }
+function closeOverlay(event) {
+  event.target == event.currentTarget ? modalClose() : '';
+}
 
-  if (
-    (refs.lightBox.classList.contains('is-open') &&
-      event.target === refs.closeBtn) ||
-    event.target.classList.contains('lightbox__content') ||
-    event.code === 'Escape'
-  ) {
-    closeImg(event);
-  }
-};
-
-document.addEventListener('click', controlGallery);
-document.addEventListener('keydown', controlGallery);
+function handleEscape(event) {
+  event.code == 'Escape' ? modalClose() : '';
+}
