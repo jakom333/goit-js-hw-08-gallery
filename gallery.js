@@ -28,10 +28,6 @@ const createGalery = galleryItems =>
 
 refs.gallery.insertAdjacentHTML('beforeend', createGalery(galleryItems));
 
-refs.gallery.addEventListener('click', modalOpen);
-refs.closeButton.addEventListener('click', modalClose);
-refs.overlay.addEventListener('click', closeOverlay);
-
 function modalOpen(event) {
   event.preventDefault();
   const targetImage = event.target;
@@ -59,3 +55,7 @@ function closeOverlay(event) {
 function handleEscape(event) {
   event.code == 'Escape' ? modalClose() : '';
 }
+
+refs.gallery.addEventListener('click', modalOpen);
+refs.closeButton.addEventListener('click', modalClose);
+refs.overlay.addEventListener('click', closeOverlay);
